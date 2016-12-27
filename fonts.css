@@ -1,0 +1,81 @@
+/* font-family: "RobotoRegular"; */
+@font-face {
+	font-family: "RobotoRegular";
+	src: url("../fonts/RobotoRegular/RobotoRegular.eot");
+	src: url("../fonts/RobotoRegular/RobotoRegular.eot?#iefix")format("embedded-opentype"),
+	url("../fonts/RobotoRegular/RobotoRegular.woff") format("woff"),
+	url("../fonts/RobotoRegular/RobotoRegular.ttf") format("truetype");
+	font-style: normal;
+	font-weight: normal;
+}
+/* font-family: "RobotoLight"; */
+@font-face {
+	font-family: "RobotoLight";
+	src: url("../fonts/RobotoLight/RobotoLight.eot");
+	src: url("../fonts/RobotoLight/RobotoLight.eot?#iefix")format("embedded-opentype"),
+	url("../fonts/RobotoLight/RobotoLight.woff") format("woff"),
+	url("../fonts/RobotoLight/RobotoLight.ttf") format("truetype");
+	font-style: normal;
+	font-weight: normal;
+}
+/* font-family: "RobotoMedium"; */
+@font-face {
+	font-family: "RobotoMedium";
+	src: url("../fonts/RobotoMedium/RobotoMedium.eot");
+	src: url("../fonts/RobotoMedium/RobotoMedium.eot?#iefix")format("embedded-opentype"),
+	url("../fonts/RobotoMedium/RobotoMedium.woff") format("woff"),
+	url("../fonts/RobotoMedium/RobotoMedium.ttf") format("truetype");
+	font-style: normal;
+	font-weight: normal;
+}
+/* font-family: "RobotoBold"; */
+@font-face {
+	font-family: "RobotoBold";
+	src: url("../fonts/RobotoBold/RobotoBold.eot");
+	src: url("../fonts/RobotoBold/RobotoBold.eot?#iefix")format("embedded-opentype"),
+	url("../fonts/RobotoBold/RobotoBold.woff") format("woff"),
+	url("../fonts/RobotoBold/RobotoBold.ttf") format("truetype");
+	font-style: normal;
+	font-weight: normal;
+}
+/* Код для подключения шрифта в /css/stylename.css */
+/* font-family: "ArvoRegular"; */
+@font-face {
+    font-family: "ArvoRegular";
+    src: url("../fonts/ArvoRegular/ArvoRegular.eot");
+    src: url("../fonts/ArvoRegular/ArvoRegular.eot?#iefix")format("embedded-opentype"),
+    url("../fonts/ArvoRegular/ArvoRegular.woff") format("woff"),
+    url("../fonts/ArvoRegular/ArvoRegular.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
+}
+/* font-family: "ArvoBold"; */
+@font-face {
+    font-family: "ArvoBold";
+    src: url("../fonts/ArvoBold/ArvoBold.eot");
+    src: url("../fonts/ArvoBold/ArvoBold.eot?#iefix")format("embedded-opentype"),
+    url("../fonts/ArvoBold/ArvoBold.woff") format("woff"),
+    url("../fonts/ArvoBold/ArvoBold.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
+}
+/* font-family: "ArvoItalic"; */
+@font-face {
+    font-family: "ArvoItalic";
+    src: url("../fonts/ArvoItalic/ArvoItalic.eot");
+    src: url("../fonts/ArvoItalic/ArvoItalic.eot?#iefix")format("embedded-opentype"),
+    url("../fonts/ArvoItalic/ArvoItalic.woff") format("woff"),
+    url("../fonts/ArvoItalic/ArvoItalic.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
+}
+/* font-family: "ArvoBoldItalic"; */
+@font-face {
+    font-family: "ArvoBoldItalic";
+    src: url("../fonts/ArvoBoldItalic/ArvoBoldItalic.eot");
+    src: url("../fonts/ArvoBoldItalic/ArvoBoldItalic.eot?#iefix")format("embedded-opentype"),
+    url("../fonts/ArvoBoldItalic/ArvoBoldItalic.woff") format("woff"),
+    url("../fonts/ArvoBoldItalic/ArvoBoldItalic.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
+}
