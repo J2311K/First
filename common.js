@@ -76,42 +76,121 @@ document.cookie = 'rooms' + rooms.value;
 
 var container = document.querySelector('.hotels-list');
 var hotels = [];
+var activeFilter = 'filter-all';
 
+var filterReset = document.querySelector('.hotel-filter-reset');
+filterReset.onclick = function(evt) {
+	document.querySelector('#' + activeFilter).classList.remove('hotel-filter-active');
+	renderHotels(hotels);
+}
+
+
+var filters = document.querySelectorAll('.hotel-filter');
+	for ( var i = 0; i < filters.length; i++) {
+		filters[i].onclick = function(evt) {
+			var clickedElementID = evt.target.id;
+			console.log(clickedElementID);
+			setActiveFilter(clickedElementID);
+		}
+	}
+	
 getHotels();
-/**
-* Отрисовка списка отелей
-* @param {Array, <Object>} hotels
-*/
+function renderHotels(hotelsToRender,replace){
+	if (replace){
+		container.innerHTML = '';
+	}
+	container.innerHTML = '';
+	var fragment = document.createDocumentFragment();
+
+	hotelsToRender.forEach(function(hotel) {
+	var element = getElementFromTemplate(hotel);
+
+	// Для каждого из 50 элементов вызывается отрисовка в DOM
+	// Потенциально, это замедляет производительность в старых браузерах,
+	// потому что пересчет параметров страницы будет производиться после
+	// каждой вставки элемента на странице. Чтобы этого избежать, пользуются
+	// фрагментами, нодами вида DocumentFragment  , которые представляют
+	// собой контейнеры для других элементов
+	fragment. appendChild(element);
+	});
+
+	container.appendChild(fragment);
+}
+
+
+
+function setActiveFilter(id){
+
+	if (activeFilter === id) {
+		return
+	}
+	document.querySelector('#' + activeFilter).classList.remove('hotel-filter-active');
+	document.querySelector('#' + id).classList.add('hotel-filter-active');
+
+
+
+	// Отсортировать и отфильтровать отели по выбранному параметру и вывести а страницу
+	//  hotels будет хранит изначальный список отелей
+	var filteredHotels = hotels.slice(0);  //Копирование массива
+	console.log(filteredHotels);
+
+	switch (id) {
+		case 'filter-expensive':
+			// Для показа сначала дорогих отелей
+			// список нужно отсортировать по убыванию цены
+			filteredHotels = filteredHotels.sort(function(a, b){
+				
+				return b.price - a.price;
+			}).filter(function(item) {
+				return item.price >=5000;
+			});
+		break;
+		case 'filter-6rating':
+			filteredHotels = filteredHotels.sort(function(a, b){
+				return b.rating - a.rating;
+			}).filter(function(item) {
+				return item.rating >= 6;
+			});
+		break;
+		case 'filter-2stars':
+			filteredHotels = filteredHotels.sort(function(a, b){
+				return b.stars - a.stars;
+			}).filter(function(item) {
+				return item.stars >= 2;
+			});
+		break;
+		case 'filter-3km':
+			filteredHotels = filteredHotels.sort(function(a, b){
+				return a.distance - b.distance;
+			}).filter(function(item) {
+				return item.distance <= 3 ;
+			});
+		break;
+	}
+
+	renderHotels(filteredHotels);
+	activeFilter = id;
+}
 
 function getHotels() {
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', '../data/hotels.json');
+	xhr.open('GET', '../data/hotel.json');
 
 	// лучше объявлять обработчики до отправки события, 
 	//чтобы быть уверенным что обработчик 100% сработает
 	xhr.onload = function(evt) {
 		var rawData = evt.target.response;
 		var loadedHotels = JSON.parse(rawData);
-
+		hotels = loadedHotels;
 		//Обработка загруженных данных (например отисовка)
 
-		renderHotels(loadedHotels);
+		renderHotels(hotels);
 	}
 	// отправка запроса прозводится вызовом метода send
 	xhr.send();
 }
 
 
-
-function renderHotels(hotelsToRender,replace){
-	if (replace){
-		container.innerHTML = '';
-	}
-	hotelsToRender.forEach(function(hotel) {
-	var element = getElementFromTemplate(hotel);
-	container.appendChild(element);
-});
-}
 
 
 function getElementFromTemplate(data) {
@@ -125,9 +204,7 @@ function getElementFromTemplate(data) {
 	element.querySelector('.hotel-name').textContent = data.name;
 	element.querySelector('.hotel-stars').textContent = data.stars;
 	element.querySelector('.hotel-stars').style.fontSize = "0px";
-	
-	
- 	var minW = 11;  // .hotel-stars (min-width = 11px; }
+	var minW = 11;
     element.querySelector('.hotel-stars').style.minWidth = (minW * data.stars) + 'px';
     element.querySelector('.hotel-distance-kilometers').textContent = data.distance;
     
@@ -168,7 +245,7 @@ function getElementFromTemplate(data) {
 		element.style.backgroundImage = 'url(\'' + backgroundImage.src + '\')';
 	}
 
-	//  2 что если изображение не загрузилось? (упал сервер)
+	//  2 что если изображеение не загрузилось? (упал сервер)
 	backgroundImage.onerror = function() {
 		element.classList.add('hotel-nophoto');
 	}	
