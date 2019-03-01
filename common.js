@@ -75,28 +75,61 @@ document.cookie = 'rooms' + rooms.value;
 
 
 var container = document.querySelector('.hotels-list');
+var hotels = [];
 
-hotels.forEach(function(hotel) {
+getHotels();
+/**
+* Отрисовка списка отелей
+* @param {Array, <Object>} hotels
+*/
+
+function getHotels() {
+	var xhr = new XMLHttpRequest();
+	xhr.open('GET', '../data/hotels.json');
+
+	// лучше объявлять обработчики до отправки события, 
+	//чтобы быть уверенным что обработчик 100% сработает
+	xhr.onload = function(evt) {
+		var rawData = evt.target.response;
+		var loadedHotels = JSON.parse(rawData);
+
+		//Обработка загруженных данных (например отисовка)
+
+		renderHotels(loadedHotels);
+	}
+	// отправка запроса прозводится вызовом метода send
+	xhr.send();
+}
+
+
+
+function renderHotels(hotelsToRender,replace){
+	if (replace){
+		container.innerHTML = '';
+	}
+	hotelsToRender.forEach(function(hotel) {
 	var element = getElementFromTemplate(hotel);
 	container.appendChild(element);
-})
+});
+}
+
 
 function getElementFromTemplate(data) {
-  var template = document.querySelector('#hotel-template');
-	  if ('content' in template) {
-	  	var element = template.content.children[0].cloneNode(true);
-	  } 
-    else {
-  		var element = template.children[0].cloneNode(true);
-	  }
+	var template = document.querySelector('#hotel-template');
+	if ('content' in template) {
+		var element = template.content.children[0].cloneNode(true);
+	} else {
+		var element = template.children[0].cloneNode(true);
+	}
 	
 	element.querySelector('.hotel-name').textContent = data.name;
 	element.querySelector('.hotel-stars').textContent = data.stars;
 	element.querySelector('.hotel-stars').style.fontSize = "0px";
-  
-  var minW = 11;
-   element.querySelector('.hotel-stars').style.minWidth = (minW * data.stars) + 'px';
-   element.querySelector('.hotel-distance-kilometers').textContent = data.distance;
+	
+	
+ 	var minW = 11;  // .hotel-stars (min-width = 11px; }
+    element.querySelector('.hotel-stars').style.minWidth = (minW * data.stars) + 'px';
+    element.querySelector('.hotel-distance-kilometers').textContent = data.distance;
     
     // есть ли wifi в номерее ?
     if (data.amenities.indexOf( 'wifi' ) != -1 ){
@@ -135,7 +168,7 @@ function getElementFromTemplate(data) {
 		element.style.backgroundImage = 'url(\'' + backgroundImage.src + '\')';
 	}
 
-	//  2 что если изображеение не загрузилось? (упал сервер)
+	//  2 что если изображение не загрузилось? (упал сервер)
 	backgroundImage.onerror = function() {
 		element.classList.add('hotel-nophoto');
 	}	
