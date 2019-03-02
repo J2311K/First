@@ -76,14 +76,17 @@ document.cookie = 'rooms' + rooms.value;
 
 var container = document.querySelector('.hotels-list');
 var hotels = [];
+var filteredHotels = [];
+var currentPage = 0;
+var PAGE_SIZE = 9;
 var activeFilter = 'filter-all';
 
+/*
 var filterReset = document.querySelector('.hotel-filter-reset');
 filterReset.onclick = function(evt) {
 	document.querySelector('#' + activeFilter).classList.remove('hotel-filter-active');
-	renderHotels(hotels);
+	renderHotels(hotels, 0, true);
 }
-
 
 var filters = document.querySelectorAll('.hotel-filter');
 	for ( var i = 0; i < filters.length; i++) {
@@ -91,18 +94,71 @@ var filters = document.querySelectorAll('.hotel-filter');
 			var clickedElementID = evt.target.id;
 			console.log(clickedElementID);
 			setActiveFilter(clickedElementID);
+		};
+	}
+*/
+
+// тот же самый результат достигнут с помощью того, что событие click проиходит из глубины (всплытие), 
+// т.е. в данном случае событие click происходит и на .hotels-filters и на '.hotel-filter'
+var filters = document.querySelector('.hotels-filters');
+	filters.addEventListener('click', function(evt){
+		var clickedElementID = evt.target;
+		if (clickedElementID.classList.contains('hotel-filter')){
+			setActiveFilter(clickedElementID.id);
+		}
+		if (clickedElementID.classList.contains('hotel-filter-reset')){
+			document.querySelector('#' + activeFilter).classList.remove('hotel-filter-active');
+			renderHotels(hotels, 0, true);
+		}
+	});
+
+
+var scrollTimeout;
+
+window.addEventListener( 'scroll', function(evt){
+	clearTimeout(scrollTimeout);
+	scrollTimeout = setTimeout(function() {
+		console.log('scroll');
+	})
+	
+	// Как определить что скролл внизу страницы и пора показать
+	// следующиую порцию отелей?
+	// Проверить виден ли футер страницы?
+	// Как проверить виден ли футер страницы?
+	// 1. определить положение футера относительно экрана (вьюпорта)
+	var footerCoordinates = document.querySelector('footer').getBoundingClientRect();
+	// 2. опеделить высоту экрана
+	var viewportSize = window.innerHeight;
+	
+	// 3.если смещение футера минус высота экрана меньше высоты футера,
+	//     футер виден хотя бы частично
+	if (footerCoordinates.bottom - window.innerHeight <= footerCoordinates.height){
+		console.log(viewportSize);
+		console.log(filteredHotels.length);
+		console.log(currentPage);
+		
+		if (currentPage < Math.ceil(filteredHotels.length / PAGE_SIZE)){
+			console.log(filteredHotels.length);
+			
+		renderHotels(filteredHotels, ++currentPage);
 		}
 	}
+});
 	
 getHotels();
-function renderHotels(hotelsToRender,replace){
+
+
+function renderHotels(hotelsToRender, pageNumber, replace){
 	if (replace){
 		container.innerHTML = '';
 	}
-	container.innerHTML = '';
+	/*container.innerHTML = '';*/
 	var fragment = document.createDocumentFragment();
+	var from = pageNumber * PAGE_SIZE;
+	var to = from + PAGE_SIZE;
+	var pageHotels = hotelsToRender.slice(from, to);
 
-	hotelsToRender.forEach(function(hotel) {
+	pageHotels.forEach(function(hotel) {
 	var element = getElementFromTemplate(hotel);
 
 	// Для каждого из 50 элементов вызывается отрисовка в DOM
@@ -131,8 +187,7 @@ function setActiveFilter(id){
 
 	// Отсортировать и отфильтровать отели по выбранному параметру и вывести а страницу
 	//  hotels будет хранит изначальный список отелей
-	var filteredHotels = hotels.slice(0);  //Копирование массива
-	console.log(filteredHotels);
+	filteredHotels = hotels.slice(0);  //Копирование массива
 
 	switch (id) {
 		case 'filter-expensive':
@@ -168,7 +223,7 @@ function setActiveFilter(id){
 		break;
 	}
 
-	renderHotels(filteredHotels);
+	renderHotels(filteredHotels, 0, true);
 	activeFilter = id;
 }
 
@@ -184,7 +239,7 @@ function getHotels() {
 		hotels = loadedHotels;
 		//Обработка загруженных данных (например отисовка)
 
-		renderHotels(hotels);
+		renderHotels(hotels, 0);
 	}
 	// отправка запроса прозводится вызовом метода send
 	xhr.send();
@@ -230,13 +285,6 @@ function getElementFromTemplate(data) {
 	//  error в этом случае не произойдёт
 	var IMAGE_TIMEOUT = 10000;
 
-
-	var imageLoadTimeout = setTimeout(function() {
-		backgroundImage.src = ''; //Прекращаем загрузку через IMAGE_TIMEOUT секунд
-		element.classList.add('hotel-nophoto'); //Показываем ошибку
-	}, IMAGE_TIMEOUT);
-
-
 	// 1 Изображения отличаются от обычных Dom-элементов тем, что
 	// после задания src они загружаются с сервера. Для проверки 
 	// загрузилось изображение или нет, cуществует событие load
@@ -245,6 +293,13 @@ function getElementFromTemplate(data) {
 		element.style.backgroundImage = 'url(\'' + backgroundImage.src + '\')';
 	}
 
+	var imageLoadTimeout = setTimeout(function() {
+		backgroundImage.src = ''; //Прекращаем загрузку через IMAGE_TIMEOUT секунд
+		element.classList.add('hotel-nophoto'); //Показываем ошибку
+	}, IMAGE_TIMEOUT);
+
+
+	
 	//  2 что если изображеение не загрузилось? (упал сервер)
 	backgroundImage.onerror = function() {
 		element.classList.add('hotel-nophoto');
